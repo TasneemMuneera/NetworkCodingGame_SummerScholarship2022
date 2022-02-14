@@ -7,6 +7,7 @@ const player_card_color = Color(0xffffd5cc);
 const Rule_button_color= Color(0xffff5a922);
 const Rule_card_color= Color(0xfff8d989);
 const player_selection_color= Color(0xffffaf42);
+const play_button_color= Color(0xff78b26d);
 const Label_text= TextStyle(
     fontSize: 25.0,
     color: Colors.white,
@@ -69,8 +70,10 @@ const Card_text = TextStyle(
 
 );
 const Item_text = TextStyle(
-  fontSize: 16,
+
+  fontSize: 18,
   fontWeight: FontWeight.w900,
+
 
 
 

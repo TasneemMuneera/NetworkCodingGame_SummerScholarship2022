@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'item_dialogue_box.dart';
+
 
 class Player_container_edited extends StatelessWidget {
 

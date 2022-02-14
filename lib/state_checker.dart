@@ -4,8 +4,8 @@ import 'package:alert/alert.dart';
 //This class gives alerts and state checker function is for adding boxes to transmission packets.
 class State_checker{
 
-
-  Color state_check1(bool value_red, bool value_green, bool value_blue, bool red_state, bool blue_state, bool green_state)
+// This is used for updating colors to the transmission packet icons
+  Color color_check_transmission_icons(bool value_red, bool value_green, bool value_blue, bool red_state, bool blue_state, bool green_state)
   {
     Color color= Colors.transparent;
     if(red_state==true)
@@ -39,10 +39,31 @@ class State_checker{
     return color;
 
   }
+  // this is used for assigning the colors to the "Players have" column
+  Color color_assign_boxes(String color_value)
+  {
+    Color color= Colors.transparent;
+    if(color_value=='Red box')
+      {
+        color= Colors.red;
+      }
+    else if (color_value=='Green box')
+      {
+        color= Colors.green;
+      }
+    else if (color_value=='Blue box')
+    {
+      color= Colors.blue;
+    }
+
+    return color;
+
+  }
 
 
 
- bool alert_giver_red(int count_red){
+
+  bool alert_giver_red(int count_red){
 
     if(count_red>1){
        Alert(message: 'Cannot be taken more than one').show();
@@ -90,119 +111,3 @@ class State_checker{
 
 
 }
-// Color state_check(bool value_red, bool value_green, bool value_blue, bool red_state, bool blue_state, bool green_state)
-// {
-//   Color color= Colors.transparent;
-//   if(value_red==true && value_green==true && value_blue==true ){
-//   }
-//   else if (value_red==true && value_green==false && value_blue==false){
-//     if (red_state == true){
-//
-//     }
-//     if (green_state == true){
-//       return Colors.green;
-//     }
-//     if (blue_state==true){
-//       return Colors.blue;
-//     }
-//   }
-//   else if (value_red==true && value_green==true && value_blue==false){
-//     if (red_state == true){
-//
-//     }
-//     if (green_state == true){
-//
-//     }
-//     if (blue_state==true){
-//       return Colors.blue;
-//     }
-//   }
-//   else if (value_red==true && value_green==false && value_blue==true){
-//     if (red_state == true){
-//
-//     }
-//     if (green_state == true){
-//       return Colors.green;
-//     }
-//     if (blue_state==true){
-//
-//     }
-//   }
-//   else if (value_red==false && value_green==true && value_blue==false){
-//     if (red_state == true){
-//       return Colors.red;
-//     }
-//     if (green_state == true){
-//
-//     }
-//     if (blue_state==true){
-//       return Colors.blue;
-//     }
-//   }
-//   else if (value_red==false && value_green==true && value_blue==true){
-//     if (red_state == true){
-//       return Colors.red;
-//     }
-//     if (green_state == true){
-//
-//     }
-//     if (blue_state==true){
-//
-//     }
-//   }
-//   else if (value_red==true && value_green==true && value_blue==false){
-//     print("red true green true blue false");
-//     if (red_state == true){
-//       print("red true green true blue false blue state false");
-//     }
-//     if (green_state == true){
-//       print("red true green true blue false blue state false");
-//     }
-//     if (blue_state==true){
-//       print("red true green true blue false blue state true");
-//       return Colors.blue;
-//     }
-//   }
-//   else if (value_red== false && value_green==false && value_blue==true){
-//     if (red_state == true){
-//       return Colors.red;
-//     }
-//     if (green_state == true){
-//       return Colors.green;
-//     }
-//     if (blue_state==true){
-//     }
-//   }
-//   else if (value_red == false && value_green==true && value_blue==true){
-//     if (red_state == true){
-//       return  Colors.red;
-//     }
-//     if (green_state == true){
-//     }
-//     if (blue_state==true){
-//     }
-//   }
-//   else if (value_red== true && value_green==false && value_blue==true){
-//     if (red_state == true){
-//     }
-//     if (green_state == true){
-//       return  Colors.green;
-//     }
-//     if (blue_state==true){
-//     }
-//   }
-//   else if (value_red== false && value_green==false && value_blue==false){
-//     if (red_state == true){
-//       return Colors.red;
-//     }
-//     if (green_state == true){
-//       return Colors.green;
-//     }
-//     if (blue_state==true){
-//       return Colors.blue;
-//     }
-//   }
-//
-//   return color;
-//
-// }

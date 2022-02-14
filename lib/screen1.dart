@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ss_test/Screen2.dart';
-import 'draggable_items.dart';
+
 import 'constants.dart';
 
 
@@ -77,7 +77,7 @@ class Screen1 extends StatelessWidget {
                       ),
                     )),
 
-                backgroundColor: MaterialStateProperty.all(Color(0xff78b26d)),
+                backgroundColor: MaterialStateProperty.all(play_button_color),
 
 
               ),

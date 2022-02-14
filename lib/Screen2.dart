@@ -8,27 +8,26 @@ import 'package:ss_test/pivot_data_check.dart';
 import 'package:ss_test/constants.dart';
 import 'package:ss_test/screen3.dart';
 import 'background_cards.dart';
-import 'player_containers.dart';
+import 'box_containers.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'item_dialogue_box.dart';
 import'package:ss_test/Player_container_edited.dart';
 import 'data_packet.dart';
 import 'state_checker.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 import 'test.dart';
 import 'package:gauss_jordan/gauss_jordan.dart';
 import "dart:math";
-import 'package:scidart/scidart.dart';
-import 'package:matrix2d/matrix2d.dart';
 import 'package:extended_math/extended_math.dart';
 import 'mtrix2array.dart';
-import 'package:binary/binary.dart';
+import 'package:ss_test/sreen4.dart';
+import 'mod2_matrix.dart';
 
 
 State_checker state= State_checker();
 Green test=Green();
 Pivot_data_check pivot= Pivot_data_check();
 List2_Array2d list2_array2d= List2_Array2d();
+Matrix_result_calculation matrix_result= Matrix_result_calculation();
 
 
 
@@ -37,12 +36,7 @@ T getRandomElement<T>(List<T> box_names) {
   var i = random.nextInt(box_names.length);
   return box_names[i];
 }
-// T getRandomboxes<T>(List<T> box_names) {
-//   final random = new Random();
-//   var i = random.nextInt(box_names.length);
-//   return box_names[i];
-// }
-// generating the boxes each player wants
+
 
 
 
@@ -68,9 +62,16 @@ class _Screen2State extends State<Screen2> {
   Color player_card1=Colors.transparent;
   Color player_card2= Colors.transparent;
   Color player_card3=Colors.transparent;
-  // side information arrays
-  List<double> arr1=[0,0,0];
-  List<double> arr2=[0,0,0];
+  // side information arrays of red player
+  List<double> arr1_red=[0,0,0];
+  List<double> arr2_red=[0,0,0];
+  // side information arrays of green player
+  List<double> arr1_green=[0,0,0];
+  List<double> arr2_green=[0,0,0];
+  // side information arrays of blue player
+  List<double> arr1_blue=[0,0,0];
+  List<double> arr2_blue=[0,0,0];
+
 
 
   // round 3 data add and delete
@@ -161,15 +162,44 @@ class _Screen2State extends State<Screen2> {
   int total_test_count=0;
   //finding the min_rank
   int min_rank=0;
-  // user_matrix rank
-  int matrix_rank=0;
 
+  // desgin of the transmission
+  int total_design=0;
+  int design1=0;
+  int design2=0;
+  int design3=0;
+
+  // color assign boxes for "players have"
+  Color red_box2= Colors.transparent;
+  Color green_box2=Colors.transparent;
+  Color blue_box2=Colors.transparent;
 
 
 
 
   @override
   Widget build(BuildContext context) {
+    Color red_box1=state.color_assign_boxes(red_player_box);
+    Color green_box1=state.color_assign_boxes(green_player_box);
+    Color blue_box1=state.color_assign_boxes(blue_player_box);
+    if(red_player_box=='Green and Blue boxes')
+      {
+        red_box1=Colors.green;
+        red_box2= Colors.blue;
+      }
+    if(green_player_box=='Red and Blue boxes')
+    {
+      green_box1=Colors.red;
+      green_box2= Colors.blue;
+    }
+    if(blue_player_box=='Red and Green boxes')
+    {
+      blue_box1=Colors.red;
+      blue_box2= Colors.green;
+    }
+    // print(red_player_box);
+    // print(green_player_box);
+    // print(blue_player_box);
 
 
     return Scaffold(
@@ -210,8 +240,8 @@ class _Screen2State extends State<Screen2> {
                                 },
                                 child: Draggable<int>(
                                   data: 1,
-                                  child: Player_container(FontAwesomeIcons.box, Colors.red,30 ),
-                                  feedback: Player_container(FontAwesomeIcons.box, Colors.red,30 ) ,
+                                  child: Box_container(FontAwesomeIcons.box, Colors.red,30 ),
+                                  feedback: Box_container(FontAwesomeIcons.box, Colors.red,30 ) ,
                                 ),
                               ),
                             ),
@@ -229,8 +259,8 @@ class _Screen2State extends State<Screen2> {
                                 },
                                 child: Draggable<int>(
                                   data: 1,
-                                  child:  Player_container(FontAwesomeIcons.box, Colors.green, 30),
-                                  feedback: Player_container(FontAwesomeIcons.box, Colors.green, 30),
+                                  child:  Box_container(FontAwesomeIcons.box, Colors.green, 30),
+                                  feedback: Box_container(FontAwesomeIcons.box, Colors.green, 30),
                                 ),
                               ),
                             ),
@@ -250,8 +280,8 @@ class _Screen2State extends State<Screen2> {
 
                               child: Draggable<int>(
                                 data: 1,
-                                child: Player_container(FontAwesomeIcons.box, Colors.blueAccent, 30),
-                                feedback: Player_container(FontAwesomeIcons.box, Colors.blueAccent, 30),
+                                child: Box_container(FontAwesomeIcons.box, Colors.blueAccent, 30),
+                                feedback: Box_container(FontAwesomeIcons.box, Colors.blueAccent, 30),
 
                               ),
                             )
@@ -308,7 +338,7 @@ class _Screen2State extends State<Screen2> {
                                       bool value_red1=state.alert_giver_red(count_red);
                                       bool value_green1=test.alert_giver_green(count_green);
                                       bool value_blue1=state.alert_giver_blue(count_blue);
-                                      Color color_from_state1 = state.state_check1(value_red1, value_green1, value_blue1, red_state, blue_state, green_state);
+                                      Color color_from_state1 = state.color_check_transmission_icons(value_red1, value_green1, value_blue1, red_state, blue_state, green_state);
                                       if (color_from_state1 == Colors.red){
                                         color = color_from_state1;
                                         A_data1=1;
@@ -410,7 +440,7 @@ class _Screen2State extends State<Screen2> {
                                    bool value_red=state.alert_giver_red(count_red2);
                                    bool value_green=test.alert_giver_green(count_green2);
                                    bool value_blue=state.alert_giver_blue(count_blue2);
-                                   Color color_from_state = state.state_check1(value_red, value_green, value_blue, red_state, blue_state, green_state);
+                                   Color color_from_state = state.color_check_transmission_icons(value_red, value_green, value_blue, red_state, blue_state, green_state);
                                    if (color_from_state == Colors.red){
                                      color2_red = color_from_state;
                                      A_data2=1;
@@ -505,7 +535,7 @@ class _Screen2State extends State<Screen2> {
                                       bool value_red3=state.alert_giver_red(count_red3);
                                       bool value_green3=test.alert_giver_green(count_green3);
                                       bool value_blue3=state.alert_giver_blue(count_blue3);
-                                      Color color_from_state3 = state.state_check1(value_red3, value_green3, value_blue3, red_state, blue_state, green_state);
+                                      Color color_from_state3 = state.color_check_transmission_icons(value_red3, value_green3, value_blue3, red_state, blue_state, green_state);
                                       if (color_from_state3 == Colors.red){
                                         color3_red = color_from_state3;
                                         A_data=1;
@@ -570,65 +600,124 @@ class _Screen2State extends State<Screen2> {
 
 
 
-
+                        Center(child: Text('Players and Items!', style: Player_text,)),
+                        // Expanded(
+                        //   child:  Player_container_edited(player_card1,FontAwesomeIcons.ghost, Colors.red,45),
+                        // ),
+                        // Expanded(
+                        //   child:  Player_container_edited(player_card2,FontAwesomeIcons.ghost, Colors.green, 45 ),
+                        //
+                        // ),
+                        // Expanded(
+                        //   child:  Player_container_edited(player_card3,FontAwesomeIcons.ghost, Colors.blue, 45 ),
+                        //
+                        //
+                        // ),
 
                         Expanded(
                           flex: 8,
                             child: Background_cards(Colors.white54, Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
 
                               children: [
-                                Center(child: Text('Tap to select Players!', style: Player_text,)),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+
+
+                                  children: [
+                                    SizedBox(
+                                      height: 40,
+
+                                    ),
+                                    Expanded(child: Center(child: Container(child: Text('Player', style: Item_text)))),
+                                    Expanded(child: Center(child: Container(child: Text('Player Wants', style: Item_text)))),
+                                    Expanded(child: Center(child: Container(child: Text('Player Has', style: Item_text)))),
+                                  ],
+
+                                ),
+
+                                Row(
                                   children: [
                                     Expanded(
-                                      child:  GestureDetector(
-                                          onTap: (){
-                                            setState(() {
-                                              player_card1=player_selection_color;
-                                              player_card2=Colors.transparent;
-                                              player_card3=Colors.transparent;
-                                            });
-                                          },
-                                          child: Player_container_edited(player_card1,FontAwesomeIcons.ghost, Colors.red,45)),
+                                      flex: 4,
+                                      child:  Player_container_edited(player_card1,FontAwesomeIcons.ghost, Colors.red,45),
                                     ),
                                     Expanded(
-                                      child:  GestureDetector(
-                                          onTap: (){
-                                            setState(() {
-                                              player_card1=Colors.transparent;
-                                              player_card2=player_selection_color;
-                                              player_card3=Colors.transparent;
-                                            });
-                                          },
-                                          child: Player_container_edited(player_card2,FontAwesomeIcons.ghost, Colors.green, 45 )),
-
+                                      flex: 4,
+                                        child: Box_container(FontAwesomeIcons.box, Colors.red, 30)),
+                                    SizedBox(
+                                      width: 55,
                                     ),
-                                    Expanded(
-                                      child:  GestureDetector(
-                                          onTap: (){
-                                            setState(() {
-                                              player_card1=Colors.transparent;
-                                              player_card2=Colors.transparent;
-                                              player_card3=player_selection_color;
-                                            });
-                                          },
-                                          child: Player_container_edited(player_card3,FontAwesomeIcons.ghost, Colors.blue, 45 )),
 
-
+                                    Expanded(child: Box_container(FontAwesomeIcons.box, red_box1, 30)),
+                                    SizedBox(
+                                      width: 10,
                                     ),
+                                    Expanded(child: Box_container(FontAwesomeIcons.box, red_box2, 30)),
+                                    SizedBox(
+                                      width: 20,
+                                    )
 
 
                                   ],
                                 ),
-                                SizedBox(
-                                  height: 10,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex:4,
+                                      child:  Player_container_edited(player_card2,FontAwesomeIcons.ghost, Colors.green, 45 ),
+
+                                    ),
+                                    Expanded(
+                                        flex: 4,
+                                        child: Box_container(FontAwesomeIcons.box, Colors.green, 30)),
+                                    SizedBox(
+                                      width: 55,
+                                    ),
+
+                                    Expanded(child: Box_container(FontAwesomeIcons.box, green_box1, 30)),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(child: Box_container(FontAwesomeIcons.box, green_box2, 30)),
+                                    SizedBox(
+                                      width: 20,
+                                    )
+                                  ],
                                 ),
-                                Expanded(child: Container(child: Text('Red player has $red_player_box and wants $check1.', style: Item_text))),
-                                Expanded(child: Container(child: Text('Green player has $green_player_box and wants $check2.', style: Item_text))),
-                                Expanded(child: Container(child: Text('Blue player has $blue_player_box and wants $check3.', style: Item_text))),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex:4,
+                                      child:  Player_container_edited(player_card3,FontAwesomeIcons.ghost, Colors.blue, 45 ),
+
+
+                                    ),
+                                    Expanded(
+                                        flex: 4,
+                                        child: Box_container(FontAwesomeIcons.box, Colors.blue, 30)),
+                                    SizedBox(
+                                      width: 55,
+                                    ),
+
+                                    Expanded(child: Box_container(FontAwesomeIcons.box, blue_box1, 30)),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(child: Box_container(FontAwesomeIcons.box, blue_box2, 30)),
+                                    SizedBox(
+                                      width: 20,
+                                    )
+                                  ],
+                                ),
+
+
+                                // Expanded(child: Container(child: Text('Wants', style: Item_text))),
+                                // Expanded(child: Container(child: Text('Has', style: Item_text))),
+                                // Expanded(child: Container(child: Text('Red player has $red_player_box and wants $check1.', style: Item_text))),
+                                // Expanded(child: Container(child: Text('Green player has $green_player_box and wants $check2.', style: Item_text))),
+                                // Expanded(child: Container(child: Text('Blue player has $blue_player_box and wants $check3.', style: Item_text))),
 
 
                               ],
@@ -650,49 +739,54 @@ class _Screen2State extends State<Screen2> {
                       // checking if the user has selected player1/ player2/ player3
 
 
-                      if (player_card1==player_selection_color){
+
 
                         if(red_player_box=='Green and Blue boxes')
                           // checking the values of what they have for each player/
                           {
-                            arr1=[0.0,1.0,0.0];
-                            arr2=[0.0,0.0,1.0];
+                            arr1_red=[0.0,1.0,0.0];
+                            arr2_red=[0.0,0.0,1.0];
 
                           }
                         else{
-                          arr1= box_check.get_box_values(red_player_box);
-                          arr2=[0.0,0.0,0.0];
+                          arr1_red= box_check.get_box_values(red_player_box);
+                          arr2_red=[0.0,0.0,0.0];
                         }
 
-                      }
-                      else if (player_card2==player_selection_color)
-                        {
+
+
+
                           if(green_player_box=='Red and Blue boxes')
                           {
-                            arr1=[0.0,1.0,0.0];
-                            arr2=[0.0,0.0,1.0];
+                            arr1_green=[0.0,1.0,0.0];
+                            arr2_green=[0.0,0.0,1.0];
 
                           }
                           else{
-                            arr1= box_check.get_box_values(green_player_box);
-                            arr2=[0.0,0.0,0.0];
+                            arr1_green= box_check.get_box_values(green_player_box);
+                            arr2_green=[0.0,0.0,0.0];
                           }
-                        }
-                      else if (player_card3==player_selection_color)
-                      {
+
+
+
                         if(blue_player_box=='Red and Green boxes')
                         {
-                          arr1=[0.0,1.0,0.0];
-                          arr2=[0.0,0.0,1.0];
+                          arr1_blue=[0.0,1.0,0.0];
+                          arr2_blue=[0.0,0.0,1.0];
 
                         }
                         else{
-                          arr1= box_check.get_box_values(blue_player_box);
-                          arr2=[0.0,0.0,0.0];
+                          arr1_blue= box_check.get_box_values(blue_player_box);
+                          arr2_blue=[0.0,0.0,0.0];
                         }
-                      }
+                        // defining the matrices of each reciever
 
-                      var test=GaussJordan.solve([[A_t_1,B_t_1,C_t_1],[A_t_2,B_t_2,C_t_2],[A_t_3,B_t_3,C_t_3],arr1, arr2]);
+                        var red_player_matrix=GaussJordan.solve([[A_t_1,B_t_1,C_t_1],[A_t_2,B_t_2,C_t_2],[A_t_3,B_t_3,C_t_3],arr1_red, arr2_red]);
+                        var green_player_matrix=GaussJordan.solve([[A_t_1,B_t_1,C_t_1],[A_t_2,B_t_2,C_t_2],[A_t_3,B_t_3,C_t_3],arr1_green, arr2_green]);
+                        var blue_player_matrix=GaussJordan.solve([[A_t_1,B_t_1,C_t_1],[A_t_2,B_t_2,C_t_2],[A_t_3,B_t_3,C_t_3],arr1_blue, arr2_blue]);
+
+                        // this is the fitting matrix for the best solution
+
                      var fitting_matrix= list2_array2d.fitting_matrix_preform([1.0, 0.0,0.0],[0.0, 1.0,0.0],[0.0,0.0,1.0], red_player_box, green_player_box, blue_player_box);
                      // getting the star count of the matrix
 
@@ -715,83 +809,100 @@ class _Screen2State extends State<Screen2> {
                       int count_rows=5;
                       int count_cols=3;
 
-
-                       for(int i=0; i<count_rows;i++){
-                         for(int j=0;j<count_cols;j++){
-                           test[i][j]= (test[i][j])%2;
-
-
-                         }
-                       }
+                      //finding the mod2 of the matrices
+                      red_player_matrix= matrix_result.mod2_finder(red_player_matrix, count_rows, count_cols);
+                      green_player_matrix=matrix_result.mod2_finder(green_player_matrix, count_rows, count_cols);
+                      blue_player_matrix=matrix_result.mod2_finder(blue_player_matrix, count_rows, count_cols);
+                      print(red_player_matrix);
+                      print(green_player_matrix);
+                      print(blue_player_matrix);
                        //Array2d form of the original matrix
-                      var test2= list2_array2d.conversion_from(test);
-                       print(test);
-                      print(test2);
+                      var red_player_2darr= list2_array2d.conversion_from(red_player_matrix);
+                      var green_player_2darr=list2_array2d.conversion_from(green_player_matrix);
+                      var blue_player_2darr=list2_array2d.conversion_from(blue_player_matrix);
 
-                      //print(SVD(test2).rank());
-                      //print(test2.diagonal);
 
-                     // looking for the position of  pivot
+                     // looking for the position of  pivot of red matrix
                       for(int i=0; i<count_rows;i++){
                         for(int j=0;j<count_cols; j++)
                         {
-                          if(test[i][j]==0)
+                          if(red_player_matrix[i][j]==0)
                           {
                             continue;
 
                           }
                           else{
 
-                            if(player_card1==player_selection_color)
-                              {
+
                                 if(pivot.pivot_position_finder(i, j)=='Red box')
                                   {
                                     red_pivot_row_number=i;
-                                    test[i][j]=0;
+                                    red_player_matrix[i][j]=0;
                                     red_pivot=1;
 
                                   }
 
 
-                              }
-                            else if(player_card2==player_selection_color)
+                          }
+                        }}
+
+                        for(int i=0; i<count_rows;i++){
+                          for(int j=0;j<count_cols; j++)
+                          {
+                            if(green_player_matrix[i][j]==0)
                             {
+                              continue;
+
+                            }
+                            else{
+
+
                               if(pivot.pivot_position_finder(i, j)=='Green box')
                               {
                                 green_pivot_row_number=i;
-                                test[i][j]=0;
+                                green_player_matrix[i][j]=0;
 
                                 green_pivot=1;
 
                               }
 
 
+
                             }
-                            else if(player_card3==player_selection_color)
+                          }}
+                        for(int i=0; i<count_rows;i++){
+                          for(int j=0;j<count_cols; j++)
+                          {
+                            if(blue_player_matrix[i][j]==0)
                             {
+                              continue;
+
+                            }
+                            else{
+
+
                               if(pivot.pivot_position_finder(i, j)=='Blue box')
                               {
                                 blue_pivot_row_number=i;
-                                test[i][j]=0;
+                                blue_player_matrix[i][j]=0;
 
                                 blue_pivot=1;
 
                               }
 
-
                             }
-                            else{
-
-                            }
-                          }
-                        }}
+                          }}
+                        // print(red_player_matrix);
+                        // print(green_player_matrix);
+                        // print(blue_player_matrix);
+                        // further checkup of the pivots of all matrices
 
                       if(red_pivot==1)
                         {
                           for(int j=0; j<count_cols;j++)
                           {
-                            if (test[red_pivot_row_number][j]!=0){
-                              print(test[red_pivot_row_number][j]);
+                            if (red_player_matrix[red_pivot_row_number][j]!=0){
+                              print(red_player_matrix[red_pivot_row_number][j]);
                               red_pivot_further=1;
                               break;
 
@@ -803,11 +914,11 @@ class _Screen2State extends State<Screen2> {
 
 
                         }
-                      else if(green_pivot==1)
+                      if(green_pivot==1)
                       {
                         for(int j=0; j<count_cols;j++)
                         {
-                          if (test[green_pivot_row_number][j]!=0){
+                          if (green_player_matrix[green_pivot_row_number][j]!=0){
                             green_pivot_further=1;
                             break;
 
@@ -819,11 +930,11 @@ class _Screen2State extends State<Screen2> {
 
 
                       }
-                      else if(blue_pivot==1)
+                       if(blue_pivot==1)
                       {
                         for(int j=0; j<count_cols;j++)
                         {
-                          if (test[blue_pivot_row_number][j]!=0){
+                          if (blue_player_matrix[blue_pivot_row_number][j]!=0){
                             blue_pivot_further=1;
                             break;
 
@@ -835,19 +946,25 @@ class _Screen2State extends State<Screen2> {
 
 
                       }
+                      print([red_pivot_further, green_pivot_further, blue_pivot_further]);
+                       // From transmission screen, packet count
+                        design1=matrix_result.design_count(A_t_1.toInt(), B_t_1.toInt(), C_t_1.toInt());
+                        design2=matrix_result.design_count(A_t_2.toInt(), B_t_2.toInt(), C_t_2.toInt());
+                        design3=matrix_result.design_count(A_t_3.toInt(), B_t_3.toInt(), C_t_3.toInt());
+                        total_design= design1+design2+design3;
+                        print('total design $total_design');
+
+
                       //Result screen
-                      matrix_rank= SVD(test2).rank();
-                      print('original matrix rank $matrix_rank');
                       //finally setting up and passing data for screen3
-                      if(player_card1==player_selection_color)
-                      {
-                        if(red_pivot_further==2)
+
+                        if(red_pivot_further==2 && green_pivot_further==2 && blue_pivot_further==2)
                           {
-                            if (matrix_rank==min_rank)
+                            if (total_design==min_rank)
                               {
                                 image_link='https://media.giphy.com/media/l2JdVRfJozpjq70SA/giphy.gif';
                                 result='Congratulations!';
-                                result_description='Your player has successfully got the box.';
+                                result_description='All players have successfully got the box.';
 
                               }
                             else
@@ -855,6 +972,10 @@ class _Screen2State extends State<Screen2> {
                                 image_link='https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif';
                                 result='Good job!';
                                 result_description='Your solution is good, but it is not the best. Try again!';
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) =>  Screen4(image_link,result,result_description)),
+                                );
 
                               }
 
@@ -862,81 +983,9 @@ class _Screen2State extends State<Screen2> {
                         else{
                           image_link='https://media.giphy.com/media/BEob5qwFkSJ7G/giphy.gif';
                           result='Sorry!';
-                          result_description='Your player did not get the box.';
+                          result_description='All of the players did not get the box.';
 
                         }
-
-
-                      }
-                      else if(player_card2==player_selection_color)
-                      {
-                        if(green_pivot_further==2)
-                        {
-                          if (matrix_rank==min_rank)
-                          {
-                            image_link='https://media.giphy.com/media/l2JdVRfJozpjq70SA/giphy.gif';
-                            result='Congratulations!';
-                            result_description='Your player has successfully got the box.';
-
-                          }
-                          else
-                          {
-                            image_link='https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif';
-                            result='Good job!';
-                            result_description='Your solution is good, but it is not the best. Try again!';
-
-                          }
-                        }
-                        else{
-                          image_link='https://media.giphy.com/media/BEob5qwFkSJ7G/giphy.gif';
-                          result='Sorry!';
-                          result_description='Your player did not get the box.';
-
-                        }
-
-
-
-                      }
-                      else if(player_card3==player_selection_color)
-                      {
-                        if(blue_pivot_further==2)
-                        {
-                          if (matrix_rank==min_rank)
-                          {
-                            image_link='https://media.giphy.com/media/l2JdVRfJozpjq70SA/giphy.gif';
-                            result='Congratulations!';
-                            result_description='Your player has successfully got the box.';
-
-                          }
-                          else
-                          {
-                            image_link='https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif';
-                            result='Good job!';
-                            result_description='Your solution is good, but it is not the best. Try again!';
-
-                          }
-                        }
-                        else{
-                          image_link='https://media.giphy.com/media/BEob5qwFkSJ7G/giphy.gif';
-                          result='Sorry!';
-                          result_description='Your player did not get the box.';
-
-                        }
-
-
-
-                      }
-                      else{
-
-                          image_link='https://media.giphy.com/media/EX6wKXVM9IOlO/giphy.gif';
-                          result='Oops!';
-                          result_description='You did not select any player. Start over or go back to select a player.';
-
-                      }
-
-
-
-
 
 
                     });
