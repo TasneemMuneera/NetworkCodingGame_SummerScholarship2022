@@ -1,4 +1,4 @@
-# ss_test
+# A Network Coding Game
 
 A new Flutter project.
 
